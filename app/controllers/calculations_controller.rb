@@ -1,20 +1,20 @@
 class CalculationsController < ApplicationController
 	def index
-		ratings
-		puts '==Load ratings data complete=========='
+		#ratings
+		#puts '==Load ratings data complete=========='
 		users
 		puts '==Load users data complete=========='
 		movies
 		puts '==Load movies data complete=========='
-		calculate_weighted_scores_and_reputation
+		calculate_weighted_scores_and_reputation(@movies, @users)
 	end
-
+=begin
     #Add data to @ratings
 	def ratings
 	  return @ratings if @ratings
 	  @ratings = Rating.all
 	end
-
+=end
 	#Add data to @users
 	def users
 	  return @users if @users
@@ -29,9 +29,9 @@ class CalculationsController < ApplicationController
 	#Add data to @movies
 	def movies
 	  return @movies if @movies
-	  @movies = Movie.all
+	  @movies = Movie.select(:id)
 	  @movies.each do |movie|
-	  	ratings_received = Rating.where(user_id: user.id)
+	  	ratings_received = Rating.where(movie_id: movie.id)
 	  	movie.rating_records = ratings_received
 	  	movie.temp_score = 0
 	  end
@@ -46,16 +46,16 @@ class CalculationsController < ApplicationController
 	  begin
 	    previous_leniency = @users.map(&:leniency)
 	    puts "=========================previous_leniencies=========================="
-	    previous_leniency.each_with_index do |leniency, index|
-	      puts @users[index].to_s + ": " + leniency.to_s
-	    end
+	    #previous_leniency.each_with_index do |leniency, index|
+	    #  puts @users[index].to_s + ": " + leniency.to_s
+	    #end
 
 	    # Pass 1: calculated weighted grades for each movie
 	    @movies.each do |movie|
 	      weighted_score = 0.0
 	      movie.rating_records.each do |rr|
 	      	reviewer = User.find(rr.user_id)
-	        weighted_score += rr.score * (1 - alpha * reviewer.leniency)
+	        weighted_score += rr.rating * (1 - alpha * reviewer.leniency)
 	      end
 	      movie.temp_score = weighted_score.to_f / movie.rating_records.size
 	      puts "temp_score=" + movie.temp_score.to_s
@@ -65,9 +65,11 @@ class CalculationsController < ApplicationController
 	    @users.each do |reviewer|
 	      sum_leniency=0.0
 	      reviewer.rating_records.each do |rr|
-	        if rr.score != 0
+	        if rr.rating != 0
 	          movie = Movie.find(rr.movie_id)
-	          temp_leniency = (rr.score - movie.temp_score) / (rr.score)
+	          #When converting leniency to reputation, we use absoluate value. 
+	          #So here is no matter whether is 'rr.rating - movie.temp_score' or 'movie.temp_score - rr.rating'.
+	          temp_leniency = (rr.rating - movie.temp_score) / (rr.rating)
 	          if temp_leniency > 1
 	            temp_leniency = 1
 	          end
@@ -76,7 +78,8 @@ class CalculationsController < ApplicationController
 	          end
 	          sum_leniency += temp_leniency
 	        else
-	          sum_leniency += (rr.score - movie.temp_score) / movie.temp_score
+	          #This line is to aviod user rate 0 for one movie and dividing by 0 is meaningless.
+	          sum_leniency += (rr.rating - movie.temp_score) / movie.temp_score
 	        end
 	      end
 
