@@ -10,7 +10,6 @@ class User < ActiveRecord::Base
     	@rating_records = Array.new
     	@reputation = nil
     	@leniency = 0
-    	@weight = 0
     end
 
     def weight

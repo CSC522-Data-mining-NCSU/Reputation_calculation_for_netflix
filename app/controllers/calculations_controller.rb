@@ -12,7 +12,7 @@ class CalculationsController < ApplicationController
     #Add data to @ratings
 	def ratings
 	  return @ratings if @ratings
-	  @ratings = Rating.limit(1000)
+	  @ratings = Rating.all
 	end
 
 	#Add data to @users
@@ -21,7 +21,6 @@ class CalculationsController < ApplicationController
 	  @users = User.all
 	  @users.each do |user|
     	user.leniency = 0
-    	user.weight = 0
     	ratings_done = Rating.where(user_id: user.id)
     	user.rating_records = ratings_done
 	  end
