@@ -39,7 +39,7 @@ class CalculationsController < ApplicationController
 
 	#Define Lauw's algorithm
 	def calculate_weighted_scores_and_reputation(movies, users)
-	  alpha = 0.5  #???????????
+	  alpha = 0.5  #self-defined
 
 	  # Iterate until convergence
 	  iterations = 0
@@ -58,6 +58,7 @@ class CalculationsController < ApplicationController
 	        weighted_score += rr.rating * (1 - alpha * reviewer.leniency)
 	      end
 	      movie.temp_score = weighted_score.to_f / movie.rating_records.size
+	      movie.save
 	      puts "temp_score=" + movie.temp_score.to_s
 	    end
 
@@ -89,6 +90,7 @@ class CalculationsController < ApplicationController
 	        reviewer.leniency = sum_leniency / reviewer.rating_records.size
 	        puts "sum_leniency/reviewer.rating_records.size:" + sum_leniency.to_s+"/"+reviewer.rating_records.size.to_s+"="+reviewer.leniency.to_s
 	      end
+	      reviewer.save
 	    end
 	    iterations += 1
 
@@ -97,6 +99,7 @@ class CalculationsController < ApplicationController
 	  #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest
 	  users.each do |reviewer|
 	    reviewer.reputation = 1 - (reviewer.leniency).abs
+	    reviewer.save
 	  end
 
 	  #for each reviewer, if no peer-review has been done in current task,  reputation =N/A
