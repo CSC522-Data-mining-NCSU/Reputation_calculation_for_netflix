@@ -2,10 +2,17 @@ class CalculationsController < ApplicationController
 	def index
 		#ratings
 		#puts '==Load ratings data complete=========='
+		beginning_time = Time.now
 		users
+		end_time = Time.now
 		puts '==Load users data complete=========='
+  		puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
+
+		beginning_time = Time.now
 		movies
+		end_time = Time.now
 		puts '==Load movies data complete=========='
+  		puts "Time elapsed #{(end_time - beginning_time)*1000} milliseconds"
 		calculate_weighted_scores_and_reputation(@movies, @users)
 	end
 =begin
@@ -19,22 +26,12 @@ class CalculationsController < ApplicationController
 	def users
 	  return @users if @users
 	  @users = User.all
-	  @users.each do |user|
-    	user.leniency = 0
-    	ratings_done = Rating.where(user_id: user.id)
-    	user.rating_records = ratings_done
-	  end
 	end
 
 	#Add data to @movies
 	def movies
 	  return @movies if @movies
-	  @movies = Movie.select(:id)
-	  @movies.each do |movie|
-	  	ratings_received = Rating.where(movie_id: movie.id)
-	  	movie.rating_records = ratings_received
-	  	movie.temp_score = 0
-	  end
+	  @movies = Movie.select(:id, :temp_score)
 	end
 
 	#Define Lauw's algorithm
@@ -51,21 +48,23 @@ class CalculationsController < ApplicationController
 	    #end
 
 	    # Pass 1: calculated weighted grades for each movie
-	    @movies.each do |movie|
+	    @movies.each_with_index do |movie, index|
 	      weighted_score = 0.0
-	      movie.rating_records.each do |rr|
+	      received_rating_records = Rating.select(:user_id, :rating, :movie_id).where(movie_id: movie.id)
+	      received_rating_records.each do |rr|
 	      	reviewer = User.find(rr.user_id)
 	        weighted_score += rr.rating * (1 - alpha * reviewer.leniency)
 	      end
-	      movie.temp_score = weighted_score.to_f / movie.rating_records.size
+	      movie.temp_score = weighted_score.to_f / received_rating_records.size
 	      movie.save
-	      puts "temp_score=" + movie.temp_score.to_s
+	      puts "temp_score for movie" + index.to_s + ': ' + movie.temp_score.to_s
 	    end
 
 	    #Pass 2: calculate leniencies for each reviewer
 	    @users.each do |reviewer|
 	      sum_leniency=0.0
-	      reviewer.rating_records.each do |rr|
+	      finished_rating_records = Rating.select(:user_id, :rating, :movie_id).where(user_id: user.id)
+	      finished_rating_records.each do |rr|
 	        if rr.rating != 0
 	          movie = Movie.find(rr.movie_id)
 	          #When converting leniency to reputation, we use absoluate value. 
@@ -87,8 +86,8 @@ class CalculationsController < ApplicationController
 	      if reviewer.rating_records.size == 0
 	        reviewer.leniency = 0
 	      else
-	        reviewer.leniency = sum_leniency / reviewer.rating_records.size
-	        puts "sum_leniency/reviewer.rating_records.size:" + sum_leniency.to_s+"/"+reviewer.rating_records.size.to_s+"="+reviewer.leniency.to_s
+	        reviewer.leniency = sum_leniency / finished_rating_records.size
+	        puts "sum_leniency/reviewer.rating_records.size:" + sum_leniency.to_s+"/"+finished_rating_records.size.to_s+"="+reviewer.leniency.to_s
 	      end
 	      reviewer.save
 	    end
