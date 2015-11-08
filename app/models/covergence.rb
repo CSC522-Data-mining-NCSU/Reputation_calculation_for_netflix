@@ -1,7 +1,7 @@
-module ApplicationHelper
+class Convergence
 	# Ensure all numbers in lists a and b are equal
 	# Options: :precision => Number of digits to round to
-	def self.convergence?(a, b, options={:precision => 0.01})
+	def self.convergence?(a, b, options={:precision => 1})
 	  raise "a and b must be the same size" unless a.size == b.size
 	  a.flatten!
 	  b.flatten!
