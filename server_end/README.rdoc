@@ -1,3 +1,0 @@
-== README
-Reputation_calculation_for_netflix
-
