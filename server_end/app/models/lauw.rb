@@ -71,9 +71,9 @@ class Lauw < ActiveRecord::Base
 
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A
 	  puts "=========================final_weights=========================="
-      final_reputation = Array.new
+      final_reputation = Hash.new
       reviewers.each do |key, reviewer|
-	    	final_reputation << reviewer.reputation
+	    	final_reputation[key] = reviewer.reputation.round(3)
 	    	puts 'reviewer' + reviewer.id.to_s + ': ' + reviewer.reputation.to_s
 	  end
 
