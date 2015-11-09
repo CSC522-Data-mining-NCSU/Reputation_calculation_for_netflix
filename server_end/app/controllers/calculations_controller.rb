@@ -3,7 +3,7 @@ class CalculationsController < ApplicationController
 	#kills off any session that might exist when something hits the server without the CSRF token.
 	protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
 	#response_to :json
-	def lauw_algorithm
+	def reputation_algorithms
 =begin
 		Input example:
 		{
@@ -35,7 +35,7 @@ class CalculationsController < ApplicationController
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
-						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0)
+						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: 1, variance: 0)
 						r.review_records << rr
 						reviewers[reviewer_id] = r
 					else 
@@ -51,9 +51,9 @@ class CalculationsController < ApplicationController
 		if has_expert_grades
 			final_reputation = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
 		else
-			final_reputation = Lauw.calculate_reputations(submissions, reviewers)
+			#final_reputation = Lauw.calculate_reputations(submissions, reviewers)
+			final_reputation = Hamer.calculate_reputations(submissions, reviewers)
 		end
-		#render json: final_reputation.to_json
 		render json: final_reputation.to_json
 	end	
 end

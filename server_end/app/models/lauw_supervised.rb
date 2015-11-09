@@ -2,8 +2,9 @@ class LauwSupervised < ActiveRecord::Base
 	###############################################
 	#Define Lauw's algorithm
 	#parameters:
-	#'submissions' hash with 'rating_records' array
-	#'reviewers'   hash with 'rating_records' array
+	#'submissions' 		hash with 'rating_records' array
+	#'reviewers'   		hash with 'rating_records' array
+	#'expert_grades'    hash
 	###############################################
 	def self.calculate_reputations(submissions, reviewers, expert_grades)
 	  alpha = 0.5  #self-defined

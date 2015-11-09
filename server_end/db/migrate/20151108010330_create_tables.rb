@@ -9,6 +9,8 @@ class CreateTables < ActiveRecord::Migration
     create_table :reviewers do |t|
       t.float :reputation
       t.float :leniency
+      t.float :variance 
+      t.float :weight
     end
 
     create_table :submissions do |t|
@@ -17,7 +19,7 @@ class CreateTables < ActiveRecord::Migration
   end
 
   def self.down
-  	drop_table :reviewer_records
+  	drop_table :review_records
   	drop_table :reviewers
   	drop_table :submissions
   end

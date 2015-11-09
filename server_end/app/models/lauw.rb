@@ -9,7 +9,6 @@ class Lauw < ActiveRecord::Base
 	  alpha = 0.5  #self-defined
 
 	  # Iterate until convergence
-	  iterations = 0
 	  begin
 	    previous_leniency = Array.new
 	    reviewers.each do |key, reviewer|
@@ -57,7 +56,6 @@ class Lauw < ActiveRecord::Base
             puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end
-        iterations += 1
 
         current_leniency = Array.new
         reviewers.each do |key, reviewer|
@@ -66,7 +64,7 @@ class Lauw < ActiveRecord::Base
       end while ApplicationHelper::convergence?(previous_leniency,current_leniency)
       #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest
       reviewers.each do |key, reviewer|
-        reviewer.reputation=1-(reviewer.leniency).abs
+        reviewer.reputation = 1 - (reviewer.leniency).abs
       end
 
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A

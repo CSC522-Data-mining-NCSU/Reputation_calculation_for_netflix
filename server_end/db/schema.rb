@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(version: 20151108010330) do
   create_table "reviewers", force: :cascade do |t|
     t.float "reputation", limit: 24
     t.float "leniency",   limit: 24
+    t.float "variance",   limit: 24
+    t.float "weight",     limit: 24
   end
 
   create_table "submissions", force: :cascade do |t|
