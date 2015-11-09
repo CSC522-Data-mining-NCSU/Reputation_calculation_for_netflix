@@ -7,16 +7,26 @@ class CalculationsController < ApplicationController
 =begin
 		Input example:
 		{
-			"assgt1": {"stu1":91, "stu3":99},
-		    "assgt2": {"stu5":92, "stu8":90},
-			"assgt1": {"stu2":91, "stu4":88}
+			"expert_grades": {"submission1": 90, "submission2":88, "submission3":93},  #optional
+			"submission1": {"stu1":81, "stu3":89},
+		    "submission2": {"stu5":87, "stu8":90},
+			"submission3": {"stu2":84, "stu4":86}
 		}
 =end
 		
 		#prepare parameters
 		submissions = Hash.new
 		reviewers = Hash.new
+		expert_grades = Hash.new
+		has_expert_grades = false
 		params.each do |key, value|
+			if /expert_grades/.match(key)
+				value.each do |k, v|
+					submission_id = k.gsub(/submission/,'').to_i
+					expert_grades[submission_id] = v
+				end
+				has_expert_grades = true
+			end
 			if /submission[0-9]+/.match(key)
 				submission_id = key.gsub(/submission/,'').to_i
 				s = Submission.new(id: submission_id, review_records: Array.new, temp_score: 0)
@@ -38,7 +48,11 @@ class CalculationsController < ApplicationController
 			end
 		end
 
-		final_reputation = Lauw.calculate_reputations(submissions, reviewers)
+		if has_expert_grades
+			final_reputation = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
+		else
+			final_reputation = Lauw.calculate_reputations(submissions, reviewers)
+		end
 		#render json: final_reputation.to_json
 		render json: final_reputation.to_json
 	end	
