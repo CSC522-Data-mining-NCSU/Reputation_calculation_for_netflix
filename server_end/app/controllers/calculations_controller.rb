@@ -48,12 +48,10 @@ class CalculationsController < ApplicationController
 			end
 		end
 
-		if has_expert_grades
-			final_reputation = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
-		else
-			#final_reputation = Lauw.calculate_reputations(submissions, reviewers)
-			final_reputation = Hamer.calculate_reputations(submissions, reviewers)
-		end
+		final_reputation = Hamer.calculate_reputations(submissions, reviewers)
+		final_reputation = HamerExtended.calculate_reputations(submissions, reviewers, expert_grades)
+		final_reputation = Lauw.calculate_reputations(submissions, reviewers)
+		final_reputation = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
 		render json: final_reputation.to_json
 	end	
 end

@@ -15,7 +15,7 @@ class LauwSupervised < ActiveRecord::Base
         if submission.temp_score > 100
           submission.temp_score = 100
         end
-	    puts "expert_grade=" + submission.temp_score.to_s
+	    #puts "expert_grade=" + submission.temp_score.to_s
 	  end
 	  # Iterate until convergence
 	  iterations = 0
@@ -24,7 +24,7 @@ class LauwSupervised < ActiveRecord::Base
 	    reviewers.each do |key, reviewer|
 	    	previous_leniency << reviewer.leniency
 	    end
-	    puts "=========================previous_leniencies=========================="
+	    #puts "=========================previous_leniencies=========================="
 	    #previous_leniency.each_with_index do |leniency, index|
 	    #  puts reviewers[index].to_s + ": " + leniency.to_s
 	    #end
@@ -52,7 +52,7 @@ class LauwSupervised < ActiveRecord::Base
             reviewer.leniency=0
           else
             reviewer.leniency=sum_leniency/reviewer.review_records.size
-            puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
+            #puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end
         iterations += 1
@@ -68,7 +68,7 @@ class LauwSupervised < ActiveRecord::Base
       end
 
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A
-	  puts "=========================final_weights=========================="
+	  puts "=========================Lauw_supervised's final_weights=========================="
       final_reputation = Hash.new
       reviewers.each do |key, reviewer|
 	    	final_reputation[key] = reviewer.reputation.round(3)

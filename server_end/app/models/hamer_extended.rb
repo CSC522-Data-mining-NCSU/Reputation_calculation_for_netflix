@@ -1,11 +1,12 @@
-class Hamer < ActiveRecord::Base
+class HamerExtended < ActiveRecord::Base
     ###############################################
     #Define Hamer's algorithm
     #parameters:
     #'submissions'    hash with 'rating_records' array
     #'reviewers'      hash with 'rating_records' array
+    #'expert_grades'  hash
     ###############################################
-    def self.calculate_reputations(submissions, reviewers)
+    def self.calculate_reputations(submissions, reviewers, expert_grades)
 
       # Iterate until convergence
       begin
@@ -29,12 +30,7 @@ class Hamer < ActiveRecord::Base
           review_records = submission.review_records
           weighted_scores = 0
           sum_weight = 0
-          review_records.each do |rr|
-            reviewer_weight = reviewers[rr.reviewer_id].weight
-            weighted_scores += rr.score * reviewer_weight
-            sum_weight += reviewer_weight
-          end
-          predicted_score = weighted_scores / sum_weight
+          predicted_score = expert_grades[submission.id]
 
           # Add to the reviewers' variance average
           review_records.each do |rr|
@@ -71,7 +67,7 @@ class Hamer < ActiveRecord::Base
         end
       end while ApplicationHelper::convergence?(previous_weights,current_weights)
 
-      puts "=========================Hamer's final_weights=========================="
+      puts "=========================Hamer_extended's final_weights=========================="
       final_reputation = Hash.new
       reviewers.each do |key, reviewer|
           final_reputation[key] = reviewer.reputation.round(3)

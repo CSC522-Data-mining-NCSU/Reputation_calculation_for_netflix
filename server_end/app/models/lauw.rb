@@ -14,7 +14,7 @@ class Lauw < ActiveRecord::Base
 	    reviewers.each do |key, reviewer|
 	    	previous_leniency << reviewer.leniency
 	    end
-	    puts "=========================previous_leniencies=========================="
+	    #puts "=========================previous_leniencies=========================="
 	    #previous_leniency.each_with_index do |leniency, index|
 	    #  puts reviewers[index].to_s + ": " + leniency.to_s
 	    #end
@@ -27,7 +27,7 @@ class Lauw < ActiveRecord::Base
 	        sum_weighted_grades = sum_weighted_grades+rr.score*(1-alpha*reviewer_leniency)
 	      end
 	      submission.temp_score = sum_weighted_grades.to_f/submission.review_records.size
-	      puts "temp_score=" + submission.temp_score.to_s
+	      #puts "temp_score=" + submission.temp_score.to_s
 	    end
 
 	    #Pass 2: calculate leniencies for each reviewer
@@ -53,7 +53,7 @@ class Lauw < ActiveRecord::Base
             reviewer.leniency=0
           else
             reviewer.leniency=sum_leniency/reviewer.review_records.size
-            puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
+            #puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end
 
@@ -68,7 +68,7 @@ class Lauw < ActiveRecord::Base
       end
 
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A
-	  puts "=========================final_weights=========================="
+	  puts "=========================Lauw's final_weights=========================="
       final_reputation = Hash.new
       reviewers.each do |key, reviewer|
 	    	final_reputation[key] = reviewer.reputation.round(3)
