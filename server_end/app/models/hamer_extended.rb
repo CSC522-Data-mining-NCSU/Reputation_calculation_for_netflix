@@ -40,7 +40,7 @@ class HamerExtended < ActiveRecord::Base
               variance = 0.01
             end
             if reviewer.review_records.count != 0
-              reviewer.variance += variance / reviewer.review_records.count
+              reviewer.variance += variance / (reviewer.review_records.count == 0 ? 1 : reviewer.review_records.count)
             end
           end
         end
@@ -51,10 +51,10 @@ class HamerExtended < ActiveRecord::Base
         reviewers.each do |key, reviewer|
           sum_variance += reviewer.variance
         end
-        average_variance = sum_variance / reviewers.size
+        average_variance = sum_variance / (reviewers.size == 0 ? 1 : reviewers.size)
 
         reviewers.each do |key, reviewer|
-          weight = average_variance / reviewer.variance
+          weight = average_variance / (reviewer.variance == 0 ? 1 : reivewer.variance)
           if weight > 2
             weight = 2 + Math.log10(weight - 1)
           end

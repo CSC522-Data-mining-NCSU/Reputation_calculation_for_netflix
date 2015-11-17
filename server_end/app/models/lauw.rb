@@ -16,9 +16,8 @@ class Lauw < ActiveRecord::Base
 	    end
 	    puts "=========================previous_leniencies=========================="
 	    #previous_leniency.each_with_index do |leniency, index|
-	    #  puts reviewers[index].to_s + ": " + leniency.to_s
+	    #  puts reviewers[index+1].to_s + ": " + leniency.to_s
 	    #end
-
 	    # Pass 1: calculated weighted grades for each submission
 	    submissions.each do |key, submission|
 	      sum_weighted_grades = 0.0
@@ -26,7 +25,7 @@ class Lauw < ActiveRecord::Base
 	      	reviewer_leniency = reviewers[rr.reviewer_id].leniency
 	        sum_weighted_grades = sum_weighted_grades+rr.score*(1-alpha*reviewer_leniency)
 	      end
-	      submission.temp_score = sum_weighted_grades.to_f/submission.review_records.size
+	      submission.temp_score = sum_weighted_grades.to_f/(submission.review_records.size == 0 ? 1 : submission.review_records.size)
 	      #puts "temp_score=" + submission.temp_score.to_s
 	    end
 
@@ -36,7 +35,7 @@ class Lauw < ActiveRecord::Base
         reviewer.review_records.each do |rr|
           submission_temp_score = submissions[rr.submission_id].temp_score
           if rr.score!=0
-            temp_leniency = (rr.score-submission_temp_score)/(rr.score)
+            temp_leniency = (rr.score-submission_temp_score)/(rr.score == 0 ? 1 : rr.score)
             if temp_leniency>1
               temp_leniency=1
             end
@@ -45,14 +44,14 @@ class Lauw < ActiveRecord::Base
             end
             sum_leniency=sum_leniency+temp_leniency
           else
-            sum_leniency=sum_leniency+(rr.score-submission_temp_score)/submission_temp_score
+            sum_leniency=sum_leniency+(rr.score-submission_temp_score)/(submission_temp_score == 0 ? 1 : submission_temp_score)
           end
         end
 
 	      if reviewer.review_records.size==0
             reviewer.leniency=0
           else
-            reviewer.leniency=sum_leniency/reviewer.review_records.size
+            reviewer.leniency=sum_leniency/(reviewer.review_records.size == 0 ? 1 : reviewer.review_records.size)
             #puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end
@@ -61,7 +60,7 @@ class Lauw < ActiveRecord::Base
         reviewers.each do |key, reviewer|
 	    	current_leniency << reviewer.leniency
 	    end
-      end while ApplicationHelper::convergence?(previous_leniency,current_leniency)
+      end while ApplicationHelper::convergence?(previous_leniency,current_leniency, :precision => 4)
       #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest
       reviewers.each do |key, reviewer|
         reviewer.reputation = 1 - (reviewer.leniency).abs
