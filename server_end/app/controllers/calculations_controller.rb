@@ -13,7 +13,7 @@ class CalculationsController < ApplicationController
 			"submission3": {"stu2":84, "stu4":86}
 		}
 =end
-		
+		puts "Get post msg!" if !params.nil?		
 		#prepare parameters
 		submissions = Hash.new
 		reviewers = Hash.new
@@ -48,10 +48,15 @@ class CalculationsController < ApplicationController
 			end
 		end
 
-		final_reputation = Hamer.calculate_reputations(submissions, reviewers)
-		final_reputation = HamerExtended.calculate_reputations(submissions, reviewers, expert_grades)
-		final_reputation = Lauw.calculate_reputations(submissions, reviewers)
-		final_reputation = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
-		render json: final_reputation.to_json
+		final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
+		#final_reputation_hamer_extended = HamerExtended.calculate_reputations(submissions, reviewers, expert_grades)
+	        final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
+		#final_reputation_lauw_supervised = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
+		final_reputation = Hash.new
+		final_reputation['Hamer'] = final_reputation_hamer
+		#final_reputation['HamerExtended'] = final_reputation_hamer_extended
+		#final_reputation['Lauw'] = final_reputation_lauw
+		#final_reputation['LauwSupervised'] = final_reputation_lauw_supervised
+		render json: final_reputation_hamer.to_json
 	end	
 end

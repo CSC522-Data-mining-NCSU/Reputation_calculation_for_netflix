@@ -14,7 +14,7 @@ class Lauw < ActiveRecord::Base
 	    reviewers.each do |key, reviewer|
 	    	previous_leniency << reviewer.leniency
 	    end
-	    #puts "=========================previous_leniencies=========================="
+	    puts "=========================previous_leniencies=========================="
 	    #previous_leniency.each_with_index do |leniency, index|
 	    #  puts reviewers[index].to_s + ": " + leniency.to_s
 	    #end

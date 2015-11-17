@@ -15,7 +15,7 @@ class Hamer < ActiveRecord::Base
         reviewers.each do |key, reviewer|
           previous_weights << reviewer.weight
         end
-        #puts "=========================previous_weights=========================="
+        puts "=========================previous_weights=========================="
         reviewers.each do |key, reviewer|
           #puts reviewer.id.to_s + ": " + reviewer.weight.to_s
         end
