@@ -69,7 +69,7 @@ class HamerExtended < ActiveRecord::Base
 
       puts "=========================Hamer_extended's final_weights=========================="
       final_reputation = Hash.new
-      reviewers.each do |key, reviewer|
+      reviewers.sort_by {|key, reviewer| key.to_i}.to_h.each do |key, reviewer|
           final_reputation[key] = reviewer.reputation.round(3)
           puts 'reviewer' + reviewer.id.to_s + ': ' + reviewer.reputation.to_s
       end
