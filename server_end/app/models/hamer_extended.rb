@@ -40,7 +40,7 @@ class HamerExtended < ActiveRecord::Base
               variance = 0.01
             end
             if reviewer.review_records.count != 0
-              reviewer.variance += variance / (reviewer.review_records.count == 0 ? 1 : reviewer.review_records.count)
+              reviewer.variance += 1.0 * variance / (reviewer.review_records.count == 0 ? 1 : reviewer.review_records.count)
             end
           end
         end
@@ -51,10 +51,10 @@ class HamerExtended < ActiveRecord::Base
         reviewers.each do |key, reviewer|
           sum_variance += reviewer.variance
         end
-        average_variance = sum_variance / (reviewers.size == 0 ? 1 : reviewers.size)
+        average_variance = 1.0 * sum_variance / (reviewers.size == 0 ? 1 : reviewers.size)
 
         reviewers.each do |key, reviewer|
-          weight = average_variance / (reviewer.variance == 0 ? 1 : reivewer.variance)
+          weight = 1.0 * average_variance / (reviewer.variance == 0 ? 1 : reviewer.variance)
           if weight > 2
             weight = 2 + Math.log10(weight - 1)
           end
@@ -65,7 +65,7 @@ class HamerExtended < ActiveRecord::Base
         reviewers.each do |key, reviewer|
           current_weights << reviewer.reputation
         end
-      end while ApplicationHelper::convergence?(previous_weights,current_weights)
+      end while ApplicationHelper::convergence?(previous_weights,current_weights, :precision => 4)
 
       puts "=========================Hamer_extended's final_weights=========================="
       final_reputation = Hash.new

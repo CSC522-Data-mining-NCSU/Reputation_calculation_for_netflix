@@ -25,7 +25,7 @@ class Lauw < ActiveRecord::Base
 	      	reviewer_leniency = reviewers[rr.reviewer_id].leniency
 	        sum_weighted_grades = sum_weighted_grades+rr.score*(1-alpha*reviewer_leniency)
 	      end
-	      submission.temp_score = sum_weighted_grades.to_f/(submission.review_records.size == 0 ? 1 : submission.review_records.size)
+	      submission.temp_score = 1.0 * sum_weighted_grades.to_f/(submission.review_records.size == 0 ? 1 : submission.review_records.size)
 	      #puts "temp_score=" + submission.temp_score.to_s
 	    end
 
@@ -35,7 +35,7 @@ class Lauw < ActiveRecord::Base
         reviewer.review_records.each do |rr|
           submission_temp_score = submissions[rr.submission_id].temp_score
           if rr.score!=0
-            temp_leniency = (rr.score-submission_temp_score)/(rr.score == 0 ? 1 : rr.score)
+            temp_leniency = 1.0 * (rr.score-submission_temp_score)/(rr.score == 0 ? 1 : rr.score)
             if temp_leniency>1
               temp_leniency=1
             end
@@ -44,14 +44,14 @@ class Lauw < ActiveRecord::Base
             end
             sum_leniency=sum_leniency+temp_leniency
           else
-            sum_leniency=sum_leniency+(rr.score-submission_temp_score)/(submission_temp_score == 0 ? 1 : submission_temp_score)
+            sum_leniency=sum_leniency+1.0 * (rr.score-submission_temp_score)/(submission_temp_score == 0 ? 1 : submission_temp_score)
           end
         end
 
 	      if reviewer.review_records.size==0
             reviewer.leniency=0
           else
-            reviewer.leniency=sum_leniency/(reviewer.review_records.size == 0 ? 1 : reviewer.review_records.size)
+            reviewer.leniency=1.0 * sum_leniency/(reviewer.review_records.size == 0 ? 1 : reviewer.review_records.size)
             #puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end

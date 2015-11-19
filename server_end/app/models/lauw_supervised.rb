@@ -17,13 +17,16 @@ class LauwSupervised < ActiveRecord::Base
         end
 	    #puts "expert_grade=" + submission.temp_score.to_s
 	  end
+
 	  # Iterate until convergence
-	  iterations = 0
+	  iterator = 1
+	  precision = 4
 	  begin
 	    previous_leniency = Array.new
 	    reviewers.each do |key, reviewer|
 	    	previous_leniency << reviewer.leniency
 	    end
+	    puts iterator
 	    #puts "=========================previous_leniencies=========================="
 	    #previous_leniency.each_with_index do |leniency, index|
 	    #  puts reviewers[index].to_s + ": " + leniency.to_s
@@ -35,7 +38,7 @@ class LauwSupervised < ActiveRecord::Base
         reviewer.review_records.each do |rr|
           submission_temp_score = submissions[rr.submission_id].temp_score
           if rr.score!=0
-            temp_leniency = (rr.score-submission_temp_score)/(rr.score == 0 ? 1 : rr.score)
+            temp_leniency = 1.0 * (rr.score-submission_temp_score)/(rr.score == 0 ? 1 : rr.score)
             if temp_leniency>1
               temp_leniency=1
             end
@@ -44,27 +47,32 @@ class LauwSupervised < ActiveRecord::Base
             end
             sum_leniency=sum_leniency+temp_leniency
           else
-            sum_leniency=sum_leniency+(rr.score-submission_temp_score)/(submission_temp_score == 0 ? 1 : submission_temp_score)
+            sum_leniency=sum_leniency+1.0 * (rr.score-submission_temp_score)/(submission_temp_score == 0 ? 1 : submission_temp_score)
           end
         end
-
 	      if reviewer.review_records.size==0
             reviewer.leniency=0
           else
-            reviewer.leniency=sum_leniency/(reviewer.review_records.size == 0 ? 1 : reviewer.review_records.size)
+            reviewer.leniency=1.0 * sum_leniency/(reviewer.review_records.size == 0 ? 1 : reviewer.review_records.size)
             #puts "sum_leniency/reviewer.review_records.size:" + sum_leniency.to_s+"/"+reviewer.review_records.size.to_s+"="+reviewer.leniency.to_s
           end
         end
-        iterations += 1
 
         current_leniency = Array.new
         reviewers.each do |key, reviewer|
 	    	current_leniency << reviewer.leniency
 	    end
-      end while ApplicationHelper::convergence?(previous_leniency,current_leniency)
+
+	    #handle the situation where reputation results cannot convergence.
+	    iterator += 1
+	    #if iterator % 10000 == 0
+	    #	precision -= 1 
+	    #	break if precision < 0
+	    #end
+      end while ApplicationHelper::convergence?(previous_leniency,current_leniency, :precision => precision)
       #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest
       reviewers.each do |key, reviewer|
-        reviewer.reputation=1-(reviewer.leniency).abs
+        reviewer.reputation = 1 - (reviewer.leniency).abs
       end
 
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A

@@ -9,7 +9,6 @@ module ApplicationHelper
 	  p = options[:precision]
 	  a.map! {|num| num.to_f.round(p)}
 	  b.map! {|num| num.to_f.round(p)}
-
 	  #judge initial situation
 	  if (a.uniq.length == 1) && (b.uniq.length == 1)
 	    return true
