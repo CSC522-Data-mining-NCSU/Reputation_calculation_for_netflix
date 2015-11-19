@@ -9,6 +9,8 @@ class HamerExtended < ActiveRecord::Base
     def self.calculate_reputations(submissions, reviewers, expert_grades)
 
       # Iterate until convergence
+      iterator = 1
+      precision = 4
       begin
         # Store previous weights to determine convergence
         previous_weights = Array.new
@@ -64,6 +66,13 @@ class HamerExtended < ActiveRecord::Base
 
         reviewers.each do |key, reviewer|
           current_weights << reviewer.reputation
+        end
+
+        #handle the situation where reputation results cannot convergence.
+        iterator += 1
+        if iterator % 10000 == 0
+          precision -= 1 
+          break if precision < 0
         end
       end while ApplicationHelper::convergence?(previous_weights,current_weights, :precision => 4)
 

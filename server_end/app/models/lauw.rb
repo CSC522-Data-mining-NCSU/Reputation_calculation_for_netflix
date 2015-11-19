@@ -9,6 +9,8 @@ class Lauw < ActiveRecord::Base
 	  alpha = 0.5  #self-defined
 
 	  # Iterate until convergence
+	  iterator = 1
+	  precision = 4
 	  begin
 	    previous_leniency = Array.new
 	    reviewers.each do |key, reviewer|
@@ -59,6 +61,13 @@ class Lauw < ActiveRecord::Base
         current_leniency = Array.new
         reviewers.each do |key, reviewer|
 	    	current_leniency << reviewer.leniency
+	    end
+
+	    #handle the situation where reputation results cannot convergence.
+	    iterator += 1
+	    if iterator % 10000 == 0
+	    	precision -= 1 
+	    	break if precision < 0
 	    end
       end while ApplicationHelper::convergence?(previous_leniency,current_leniency, :precision => 4)
       #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest

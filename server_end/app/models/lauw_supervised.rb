@@ -65,10 +65,10 @@ class LauwSupervised < ActiveRecord::Base
 
 	    #handle the situation where reputation results cannot convergence.
 	    iterator += 1
-	    #if iterator % 10000 == 0
-	    #	precision -= 1 
-	    #	break if precision < 0
-	    #end
+	    if iterator % 10000 == 0
+	    	precision -= 1 
+	    	break if precision < 0
+	    end
       end while ApplicationHelper::convergence?(previous_leniency,current_leniency, :precision => precision)
       #for each reviewer, use absolute value of leniency as reputation. At the same time make 1 the highest reputation and 0 the lowest
       reviewers.each do |key, reviewer|
