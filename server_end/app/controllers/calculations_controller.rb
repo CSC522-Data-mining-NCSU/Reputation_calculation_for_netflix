@@ -49,14 +49,14 @@ class CalculationsController < ApplicationController
 		end
 
 		final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
-		#final_reputation_hamer_extended = HamerExtended.calculate_reputations(submissions, reviewers, expert_grades)
-	    final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
-		#final_reputation_lauw_supervised = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades)
+		final_reputation_hamer_extended = HamerExtended.calculate_reputations(submissions, reviewers, expert_grades) if has_expert_grades
+	        final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
+		final_reputation_lauw_supervised = LauwSupervised.calculate_reputations(submissions, reviewers, expert_grades) if has_expert_grades
 		final_reputation = Hash.new
 		final_reputation['Hamer'] = final_reputation_hamer
-		#final_reputation['HamerExtended'] = final_reputation_hamer_extended
+		final_reputation['HamerExtended'] = final_reputation_hamer_extended if has_expert_grades
 		final_reputation['Lauw'] = final_reputation_lauw
-		#final_reputation['LauwSupervised'] = final_reputation_lauw_supervised
+		final_reputation['LauwSupervised'] = final_reputation_lauw_supervised if has_expert_grades
 		render json: final_reputation.to_json
 	end	
 end
