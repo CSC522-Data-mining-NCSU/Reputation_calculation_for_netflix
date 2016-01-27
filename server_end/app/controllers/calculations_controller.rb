@@ -7,6 +7,8 @@ class CalculationsController < ApplicationController
 =begin
 		Input example:
 		{
+			"initial_hamer_reputation": {"stu1": 0.90, "stu2":0.88, "stu3":0.93, "stu4":0.8, "stu5":0.93, "stu8":0.93},  #optional
+			"initial_lauw_reputation": {"stu1": 1.90, "stu2":0.98, "stu3":1.12, "stu4":0.94, "stu5":1.24, "stu8":1.18},  #optional
 			"expert_grades": {"submission1": 90, "submission2":88, "submission3":93},  #optional
 			"submission1": {"stu1":81, "stu3":89},
 		    "submission2": {"stu5":87, "stu8":90},
@@ -16,6 +18,7 @@ class CalculationsController < ApplicationController
 		puts "Get post msg!" if !params.nil?		
 		#prepare parameters
 		submissions = Hash.new
+		reviewer_initial_reputation_values = Hash.new
 		reviewers = Hash.new
 		expert_grades = Hash.new
 		has_expert_grades = false
@@ -27,6 +30,14 @@ class CalculationsController < ApplicationController
 				end
 				has_expert_grades = true
 			end
+
+			if /initial_hamer_reputation/.match(key)
+				value.each do |k ,v|
+					reviewer_id = k.gsub(/stu/,'').to_i
+					reviewer_initial_reputation_values[reviewer_id] = v.to_i
+				end
+			end
+
 			if /submission[0-9]+/.match(key)
 				submission_id = key.gsub(/submission/,'').to_i
 				s = Submission.new(id: submission_id, review_records: Array.new, temp_score: 0)
@@ -35,7 +46,8 @@ class CalculationsController < ApplicationController
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
-						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: 1, variance: 0)
+						/initial_hamer_reputation/.match(key) ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
+						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight ||= 1, variance: 0)
 						r.review_records << rr
 						reviewers[reviewer_id] = r
 					else 
