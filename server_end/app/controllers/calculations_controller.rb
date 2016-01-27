@@ -22,6 +22,7 @@ class CalculationsController < ApplicationController
 		reviewers = Hash.new
 		expert_grades = Hash.new
 		has_expert_grades = false
+		has_initial_hamer_reputation = false
 		params.each do |key, value|
 			if /expert_grades/.match(key)
 				value.each do |k, v|
@@ -32,9 +33,10 @@ class CalculationsController < ApplicationController
 			end
 
 			if /initial_hamer_reputation/.match(key)
+				has_initial_hamer_reputation = true
 				value.each do |k ,v|
 					reviewer_id = k.gsub(/stu/,'').to_i
-					reviewer_initial_reputation_values[reviewer_id] = v.to_i
+					reviewer_initial_reputation_values[reviewer_id] = v.to_f
 				end
 			end
 
@@ -46,7 +48,7 @@ class CalculationsController < ApplicationController
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
-						/initial_hamer_reputation/.match(key) ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
+						has_initial_hamer_reputation ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
 						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight ||= 1, variance: 0)
 						r.review_records << rr
 						reviewers[reviewer_id] = r
@@ -59,7 +61,7 @@ class CalculationsController < ApplicationController
 				submissions[submission_id] = s
 			end
 		end
-
+puts reviewer_initial_reputation_values
 		final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
 	    final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
 		final_reputation = Hash.new
