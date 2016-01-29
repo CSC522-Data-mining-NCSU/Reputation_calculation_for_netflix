@@ -50,7 +50,7 @@ class CalculationsController < ApplicationController
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
 						has_initial_hamer_reputation ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
-						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight ||= 1, variance: 0)
+						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight, variance: 0)
 						r.review_records << rr
 						reviewers[reviewer_id] = r
 					else 
