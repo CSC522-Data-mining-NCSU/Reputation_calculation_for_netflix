@@ -15,7 +15,8 @@ class CalculationsController < ApplicationController
 			"submission3": {"stu2":84, "stu4":86}
 		}
 =end
-		puts "Get post msg!" if !params.nil?		
+		puts "Get post msg!" if !params.nil?
+		#puts params		
 		#prepare parameters
 		submissions = Hash.new
 		reviewer_initial_reputation_values = Hash.new
@@ -45,7 +46,7 @@ class CalculationsController < ApplicationController
 				s = Submission.new(id: submission_id, review_records: Array.new, temp_score: 0)
 				value.each do |k, v|
 					reviewer_id = k.gsub(/stu/,'').to_i
-					next if !reviewer_initial_reputation_values.has_key?(reviewer_id) 
+					next if has_initial_hamer_reputation and !reviewer_initial_reputation_values.has_key?(reviewer_id) 
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
