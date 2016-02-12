@@ -25,6 +25,8 @@ f = File.open("[program1]reputation_values_for_OSS_with_init_repu_not_equal_to_o
 f.each_line{ |line| program_1_init_repu_not_one = JSON.parse(line) }
 f.close
 
+total_stu_num =Array.new
+
 peer_review_records.each do |submission, value|
 	sum_init_repu_one = 0
 	sum_wiki_1a1b_init_repu_not_one = 0
@@ -37,6 +39,7 @@ peer_review_records.each do |submission, value|
 		stu = stu.gsub(/stu/,'')
 		all_reputation_values_available = (wiki_1a1b_init_repu_not_one.has_key?(stu) and program_1_init_repu_not_one.has_key?(stu) and init_repu_one.has_key?(stu))
 		if all_reputation_values_available == true
+			total_stu_num << stu if !total_stu_num.include? stu
 			sum_init_repu_one += grade * init_repu_one[stu]
 			weight_init_repu_one += init_repu_one[stu]
 
@@ -59,3 +62,7 @@ puts "=====wiki_1a1b_init_repu_not_one==================="
 puts predicted_grades_wiki_1a1b_init_repu_not_one
 puts "=====program_1_init_repu_not_one==================="
 puts predicted_grades_program_1_init_repu_not_one
+puts "=====total_stu_num==================="
+print total_stu_num
+puts
+puts total_stu_num.size
