@@ -46,7 +46,7 @@ class Hamer < ActiveRecord::Base
               variance = 0.01
             end
             if reviewer.review_records.count != 0
-              reviewer.variance += 1.0 * variance / (reviewer.review_records.count == 0 ? 1 : reviewer.review_records.count)
+              reviewer.variance += 1.0 * variance / (reviewer.review_records.count == 0 ? 1 : reviewer.review_records.count) # Δr in the formular
             end
           end
         end
