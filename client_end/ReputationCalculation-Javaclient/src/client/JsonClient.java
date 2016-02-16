@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
+//Difference between TreeMap and HashMap
+//http://stackoverflow.com/questions/2444359/what-is-the-difference-between-a-hashmap-and-a-treemap 
+import java.util.TreeMap; 
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -26,9 +28,9 @@ public class JsonClient {
 			
 			DbAdapter dbAdapter = DbAdapter.GetInstance();
 			
-			HashMap<String, HashMap<String, Float>> submissions = 
+			TreeMap<String, TreeMap<String, Float>> submissions = 
 																	//assignment_id, hasTopic
-					Get_TotalScores(dbAdapter.Get_ResultSet(DBQuery.GetTotalScore(736, true)));
+					Get_TotalScores(dbAdapter.Get_ResultSet(DBQuery.GetTotalScore(733, true)));
 	
 			String inputText = GenerateInputText(submissions);
 			
@@ -47,10 +49,10 @@ public class JsonClient {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, HashMap<String, Float>> Get_TotalScores(ResultSet _resultset)
+	public static TreeMap<String, TreeMap<String, Float>> Get_TotalScores(ResultSet _resultset)
 			throws SQLException, IOException {
-		HashMap<String, Float> reviewer_records = new HashMap<String, Float>();
-		HashMap<String, HashMap<String, Float>> submissions = new HashMap<String, HashMap<String, Float>>();
+		TreeMap<String, Float> reviewer_records = new TreeMap<String, Float>();
+		TreeMap<String, TreeMap<String, Float>> submissions = new TreeMap<String, TreeMap<String, Float>>();
 		int reviewer_id = 0;
 		int submission_id = 0;
 		float total_score = 0.0f;
@@ -65,7 +67,7 @@ public class JsonClient {
 				reviewer_records.put("stu" + Integer.toString(reviewer_id), total_score);
 			}
 			else{
-				submissions.put("submission" + Integer.toString(submission_id), (HashMap<String, Float>) reviewer_records.clone());
+				submissions.put("submission" + Integer.toString(submission_id), (TreeMap<String, Float>) reviewer_records.clone());
 				submission_id = _resultset.getInt(2);
 				reviewer_records.clear();
 				reviewer_records.put("stu" + Integer.toString(reviewer_id), total_score);
@@ -73,9 +75,9 @@ public class JsonClient {
 			
 		}
 		//put last reviewer_records into `submission` hash map!!!
-		submissions.put("submission" + Integer.toString(submission_id), (HashMap<String, Float>) reviewer_records.clone());
+		submissions.put("submission" + Integer.toString(submission_id), (TreeMap<String, Float>) reviewer_records.clone());
 		reviewer_records.clear();
-		/*for (Entry<String, HashMap<String, Float>> entry : submissions.entrySet()) {
+		/*for (Entry<String, TreeMap<String, Float>> entry : submissions.entrySet()) {
 			System.out.println(entry.getKey()+" : "+entry.getValue());
 		}*/
 
@@ -94,7 +96,7 @@ public class JsonClient {
 		return result;
 	}
 	
-	public static String GenerateInputText(HashMap<String, HashMap<String, Float>> submissions){
+	public static String GenerateInputText(TreeMap<String, TreeMap<String, Float>> submissions){
 		String inputText = "{";
 		//expert grades of Wiki 1a (724)
 		//inputText += "\"expert_grades\": {\"submission23967\":93,\"submission23969\":89,\"submission23971\":95,\"submission23972\":86,\"submission23973\":91,\"submission23975\":94,\"submission23979\":90,\"submission23980\":94,\"submission23981\":87,\"submission23982\":79,\"submission23983\":91,\"submission23986\":92,\"submission23987\":91,\"submission23988\":93,\"submission23991\":98,\"submission23992\":91,\"submission23994\":87,\"submission23995\":93,\"submission23998\":92,\"submission23999\":87,\"submission24000\":93,\"submission24001\":93,\"submission24006\":96,\"submission24007\":87,\"submission24008\":92,\"submission24009\":92,\"submission24010\":93,\"submission24012\":94,\"submission24013\":96,\"submission24016\":91,\"submission24018\":93,\"submission24024\":96,\"submission24028\":88,\"submission24031\":94,\"submission24040\":93,\"submission24043\":95,\"submission24044\":91,\"submission24046\":95,\"submission24051\":92},";
@@ -121,7 +123,7 @@ public class JsonClient {
 		Set<String> submission_ids = submissions.keySet();
 		Iterator<String> submission_iterator = submission_ids.iterator();
 		String submission_key;
-		HashMap<String, Float> review_records;
+		TreeMap<String, Float> review_records;
 		Set<String> reviewer_ids;
 		Iterator<String> reviewer_iterator;
 		String reviewer_key;
