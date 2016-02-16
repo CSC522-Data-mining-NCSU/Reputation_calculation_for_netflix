@@ -5,9 +5,9 @@ public class DBQuery {
 	public static String GetTotalScore(int assignment_id, boolean hasTopic)
 	{
 		String query="SELECT U.id, RM.reviewee_id as submission_id, "+
-					//"sum(A.answer * Q.weight) / sum(QN.max_question_score * Q.weight) * 100 as total_score "+
+					"sum(A.answer * Q.weight) / sum(QN.max_question_score * Q.weight) * 100 as total_score "+
 					// new way to calculate the grades of coding artifacts
-					"100 - SUM((QN.max_question_score-A.answer) * Q.weight) AS total_score "+
+					//"100 - SUM((QN.max_question_score-A.answer) * Q.weight) AS total_score "+
 					"from answers A  "+
 					"inner join questions Q on A.question_id = Q.id "+
 					"inner join questionnaires QN on Q.questionnaire_id = QN.id  "+
