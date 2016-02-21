@@ -2,9 +2,13 @@ require 'pry'
 require 'json'
 
 peer_review_records = Hash.new
+naive_average = Hash.new
+naive_median = Hash.new
 init_repu_one = Hash.new
 wiki_1a1b_init_repu_not_one = Hash.new
 program_1_init_repu_not_one = Hash.new
+predicted_grades_naive_average = Hash.new
+predicted_grades_naive_median = Hash.new
 predicted_grades_init_repu_one = Hash.new
 predicted_grades_wiki_1a1b_init_repu_not_one = Hash.new
 predicted_grades_program_1_init_repu_not_one = Hash.new
@@ -26,11 +30,14 @@ f.each_line{ |line| program_1_init_repu_not_one = JSON.parse(line) }
 f.close
 
 total_stu_num =Array.new
+peer_grades_for_each_submission = Array.new
 
 peer_review_records.each do |submission, value|
+	sum_naive_average = 0
 	sum_init_repu_one = 0
 	sum_wiki_1a1b_init_repu_not_one = 0
 	sum_program_1_init_repu_not_one = 0
+	weight_naive_average = 0
 	weight_init_repu_one = 0
 	weight_wiki_1a1b_init_repu_not_one = 0
 	weight_program_1_init_repu_not_one = 0
@@ -40,6 +47,10 @@ peer_review_records.each do |submission, value|
 		all_reputation_values_available = (wiki_1a1b_init_repu_not_one.has_key?(stu) and program_1_init_repu_not_one.has_key?(stu) and init_repu_one.has_key?(stu))
 		if all_reputation_values_available == true
 			total_stu_num << stu if !total_stu_num.include? stu
+			peer_grades_for_each_submission << grade
+			sum_naive_average += grade
+			weight_naive_average += 1
+
 			sum_init_repu_one += grade * init_repu_one[stu]
 			weight_init_repu_one += init_repu_one[stu]
 
@@ -51,11 +62,21 @@ peer_review_records.each do |submission, value|
 		end
 	end
 
+    sorted = peer_grades_for_each_submission.sort
+  	len = sorted.length
+	predicted_grades_naive_median[submission] = ((sorted[(len - 1) / 2] + sorted[len / 2]) / 2.0).round(3)
+	predicted_grades_naive_average[submission] = (1.0 * sum_naive_average / weight_naive_average).round(3)
 	predicted_grades_init_repu_one[submission] = (1.0 * sum_init_repu_one / weight_init_repu_one).round(3)
 	predicted_grades_wiki_1a1b_init_repu_not_one[submission] = (1.0 * sum_wiki_1a1b_init_repu_not_one / weight_wiki_1a1b_init_repu_not_one).round(3)
 	predicted_grades_program_1_init_repu_not_one[submission] = (1.0 * sum_program_1_init_repu_not_one / weight_program_1_init_repu_not_one).round(3)
+
+	peer_grades_for_each_submission = []
 end
 
+puts "=====naive_average==================="
+puts predicted_grades_naive_average
+puts "=====naive_median==================="
+puts predicted_grades_naive_median
 puts "=====init_repu_one==================="
 puts predicted_grades_init_repu_one
 puts "=====wiki_1a1b_init_repu_not_one==================="
