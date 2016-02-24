@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20151108010330) do
     t.integer "submission_id", limit: 4
     t.integer "reviewer_id",   limit: 4
     t.float   "score",         limit: 24
+    t.float   "quiz_score",    limit: 24
   end
 
   create_table "reviewers", force: :cascade do |t|

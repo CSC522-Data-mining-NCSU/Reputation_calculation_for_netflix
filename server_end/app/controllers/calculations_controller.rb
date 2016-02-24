@@ -61,12 +61,11 @@ submissions = Hash.new
 					reviewer_id = k.gsub(/stu/,'').to_i
 					next if has_initial_hamer_reputation and !reviewer_initial_reputation_values.has_key?(reviewer_id)
 
-					if has_quiz_scores
+					if has_quiz_scores and !quiz_scores[submission_id].nil?
 						quiz_score = quiz_scores[submission_id][reviewer_id] ||= 20
 					else
 						quiz_score = 0.0
 					end
-
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v, quiz_score: quiz_score)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?

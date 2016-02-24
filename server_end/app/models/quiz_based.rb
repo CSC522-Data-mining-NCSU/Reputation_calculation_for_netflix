@@ -19,5 +19,9 @@ class QuizBased < ActiveRecord::Base
 
 			predicted_grades[submission.id] = 1.0 * weighted_score_sum / weight_sum
 		end
+		predicted_grades.sort_by{|key, grade| key.to_i}.to_h.each do |key, grade|
+			puts 'submission' + key.to_s + ': ' + grade.to_s
+		end
 		return predicted_grades
 	end
+end
