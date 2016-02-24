@@ -4,4 +4,5 @@ class ReviewRecord < ActiveRecord::Base
   	attr_accessor :submission_id
     attr_accessor :reviewer_id
     attr_accessor :score
+    attr_accessor :quiz_score
 end
