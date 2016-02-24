@@ -5,7 +5,7 @@ class QuizBased < ActiveRecord::Base
 	#'submissions' 		hash with 'rating_records' array
 	#'quiz_scores'      hash
 	###############################################
-	def self.calculate_reputations(submissions)
+	def self.calculate_predicted_grades(submissions)
 		predicted_grades = Hash.new
 
 		submissions.each do |key, submission|

@@ -19,7 +19,7 @@ class CalculationsController < ApplicationController
 		puts "Get post msg!" if !params.nil?
 		#puts params		
 		#prepare parameters
-		submissions = Hash.new
+submissions = Hash.new
 		reviewer_initial_reputation_values = Hash.new
 		reviewers = Hash.new
 		expert_grades = Hash.new
@@ -43,19 +43,17 @@ class CalculationsController < ApplicationController
 					reviewer_initial_reputation_values[reviewer_id] = v.to_f
 				end
 			end
-
 			if /quiz_scores/.match(key)
 				has_quiz_scores = true
-				value.each do |key, value|
-					submission_id = key.gsub(/submission/,'').to_i
+				value.each do |k, v|
+					submission_id = k.gsub(/submission/,'').to_i
 					quiz_scores[submission_id] = Hash.new
-					value.each do |k, v| 
-						reviewer_id = k.gsub(/stu/,'').to_i
-						quiz_scores[key][k] = v
+					v.each do |k1, v1| 
+						reviewer_id = k1.gsub(/stu/,'').to_i
+						quiz_scores[submission_id][reviewer_id] = v1
 					end
 				end
 			end
-
 			if /submission[0-9]+/.match(key)
 				submission_id = key.gsub(/submission/,'').to_i
 				s = Submission.new(id: submission_id, review_records: Array.new, temp_score: 0)
@@ -64,9 +62,9 @@ class CalculationsController < ApplicationController
 					next if has_initial_hamer_reputation and !reviewer_initial_reputation_values.has_key?(reviewer_id)
 
 					if has_quiz_scores
-						quiz_score = quiz_scores[submission_id][reviewer_id]
+						quiz_score = quiz_scores[submission_id][reviewer_id] ||= 20
 					else
-						quiz_score = nil
+						quiz_score = 0.0
 					end
 
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v, quiz_score: quiz_score)
@@ -86,7 +84,7 @@ class CalculationsController < ApplicationController
 				submissions[submission_id] = s
 			end
 		end
-		unless has_quiz_scores
+	unless has_quiz_scores
 			puts reviewer_initial_reputation_values
 			final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
 		    final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
@@ -102,7 +100,7 @@ class CalculationsController < ApplicationController
 			render json: final_reputation.to_json
 		else
 			predicted_grades = Hash.new
-			predicted_grades = QuizBased.calculate_reputations(submissions)
+			predicted_grades = QuizBased.calculate_predicted_grades(submissions)
 			render json: predicted_grades.to_json
 		end
 	end	
