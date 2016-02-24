@@ -4,6 +4,7 @@ class CreateTables < ActiveRecord::Migration
       t.integer :submission_id
       t.integer :reviewer_id
       t.float :score
+      t.float :quiz_score
     end
 
     create_table :reviewers do |t|
