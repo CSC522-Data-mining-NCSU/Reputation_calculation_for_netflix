@@ -7,6 +7,8 @@ lauw_repu = Hash.new
 predicted_grades_hamer_repu = Hash.new
 predicted_grades_lauw_repu = Hash.new
 
+# these writing assgts peer review records are different from normal ones.
+# since it already exclude peer reviewers who did not do quizzes.
 f = File.open("writing_assgts_peer_review_records.txt", "r")
 f.each_line{ |line| peer_review_records = JSON.parse(line) }
 f.close
