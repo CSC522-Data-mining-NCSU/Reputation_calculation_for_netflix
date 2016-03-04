@@ -5,6 +5,7 @@ peer_review_records = Hash.new
 hamer_repu = Hash.new
 lauw_repu = Hash.new
 quiz_takers = Hash.new
+predicted_grades_naive_average = Hash.new
 predicted_grades_hamer_repu = Hash.new
 predicted_grades_lauw_repu = Hash.new
 
@@ -30,8 +31,10 @@ total_stu_num =Array.new
 peer_grades_for_each_submission = Array.new
 
 peer_review_records.each do |submission, value|
+	sum_naive_average = 0
 	sum_hamer_repu = 0
 	sum_lauw_repu = 0
+	weight_naive_average = 0
 	weight_hamer_repu = 0
 	weight_lauw_repu = 0
 	all_reputation_values_available = true
@@ -41,6 +44,9 @@ peer_review_records.each do |submission, value|
 		if all_reputation_values_available == true
 			total_stu_num << stu if !total_stu_num.include? stu
 			peer_grades_for_each_submission << grade
+
+			sum_naive_average += grade
+			weight_naive_average += 1
 
 			sum_hamer_repu += grade * hamer_repu[stu]
 			weight_hamer_repu += hamer_repu[stu]
@@ -52,12 +58,15 @@ peer_review_records.each do |submission, value|
 
     sorted = peer_grades_for_each_submission.sort
   	len = sorted.length
+  	predicted_grades_naive_average[submission] = (1.0 * sum_naive_average / weight_naive_average).round(3)
 	predicted_grades_hamer_repu[submission] = (1.0 * sum_hamer_repu / weight_hamer_repu).round(3)
 	predicted_grades_lauw_repu[submission] = (1.0 * sum_lauw_repu / weight_lauw_repu).round(3)
 
 	peer_grades_for_each_submission = []
 end
 
+puts "=====naive_average==================="
+puts predicted_grades_naive_average
 puts "=====hamer_repu==================="
 puts predicted_grades_hamer_repu
 puts "=====lauw_repu==================="
