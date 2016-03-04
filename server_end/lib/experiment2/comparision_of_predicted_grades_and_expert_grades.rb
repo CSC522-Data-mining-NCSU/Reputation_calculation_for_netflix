@@ -2,8 +2,6 @@ require 'pry'
 require 'json'
 
 peer_review_records = Hash.new
-naive_average = Hash.new
-naive_median = Hash.new
 init_repu_one = Hash.new
 wiki_1a1b_init_repu_not_one = Hash.new
 program_1_init_repu_not_one = Hash.new
