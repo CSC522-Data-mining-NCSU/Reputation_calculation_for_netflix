@@ -4,6 +4,7 @@ require 'json'
 peer_review_records = Hash.new
 hamer_repu = Hash.new
 lauw_repu = Hash.new
+quiz_takers = Hash.new
 predicted_grades_hamer_repu = Hash.new
 predicted_grades_lauw_repu = Hash.new
 
@@ -11,6 +12,10 @@ predicted_grades_lauw_repu = Hash.new
 # since it already exclude peer reviewers who did not do quizzes.
 f = File.open("writing_assgts_peer_review_records.txt", "r")
 f.each_line{ |line| peer_review_records = JSON.parse(line) }
+f.close
+
+f = File.open("[quiz]quiz_takers_from_writing_assgts.txt", "r")
+f.each_line{ |line| quiz_takers = JSON.parse(line) }
 f.close
 
 f = File.open("[hamer]reputation_values_for_writing_assgts_without_expert_grades.txt", "r")
@@ -32,7 +37,7 @@ peer_review_records.each do |submission, value|
 	all_reputation_values_available = true
 	value.each do |stu, grade|
 		stu = stu.gsub(/stu/,'')
-		all_reputation_values_available = (hamer_repu.has_key?(stu) and lauw_repu.has_key?(stu))
+		all_reputation_values_available = (hamer_repu.has_key?(stu) and lauw_repu.has_key?(stu) and quiz_takers.has_key?(stu))
 		if all_reputation_values_available == true
 			total_stu_num << stu if !total_stu_num.include? stu
 			peer_grades_for_each_submission << grade

@@ -19,14 +19,14 @@ class CalculationsController < ApplicationController
 		puts "Get post msg!" if !params.nil?
 		#puts params		
 		#prepare parameters
-submissions = Hash.new
+		submissions = Hash.new
 		reviewer_initial_reputation_values = Hash.new
 		reviewers = Hash.new
 		expert_grades = Hash.new
 		quiz_scores = Hash.new
 		has_quiz_scores = false
 		has_expert_grades = false
-		has_initial_hamer_reputation = false
+		has_initial_hamer_or_lauw_reputation = false
 		params.each do |key, value|
 			if /expert_grades/.match(key)
 				value.each do |k, v|
@@ -36,8 +36,8 @@ submissions = Hash.new
 				has_expert_grades = true
 			end
 
-			if /initial_hamer_reputation/.match(key)
-				has_initial_hamer_reputation = true
+			if /initial_hamer_reputation/.match(key) or /initial_lauw_reputation/.match(key)
+				has_initial_hamer_or_lauw_reputation = true
 				value.each do |k ,v|
 					reviewer_id = k.gsub(/stu/,'').to_i
 					reviewer_initial_reputation_values[reviewer_id] = v.to_f
@@ -59,7 +59,7 @@ submissions = Hash.new
 				s = Submission.new(id: submission_id, review_records: Array.new, temp_score: 0)
 				value.each do |k, v|
 					reviewer_id = k.gsub(/stu/,'').to_i
-					next if has_initial_hamer_reputation and !reviewer_initial_reputation_values.has_key?(reviewer_id)
+					next if has_initial_hamer_or_lauw_reputation and !reviewer_initial_reputation_values.has_key?(reviewer_id)
 
 					if has_quiz_scores and !quiz_scores[submission_id].nil?
 						quiz_score = quiz_scores[submission_id][reviewer_id] ||= 20
@@ -69,7 +69,7 @@ submissions = Hash.new
 					rr = ReviewRecord.new(submission_id: submission_id, reviewer_id: reviewer_id, score: v, quiz_score: quiz_score)
 					#check if this reviewer is already in hash.
 					if reviewers[k].nil?
-						has_initial_hamer_reputation ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
+						has_initial_hamer_or_lauw_reputation ? weight = reviewer_initial_reputation_values[reviewer_id] : weight = 1
 						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight, variance: 0)
 						# Future improvement: actually storing ReviewRecord.id instead of storing whole ReviewRecord will save lots of space
 						r.review_records << rr
