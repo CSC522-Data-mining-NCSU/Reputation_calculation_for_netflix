@@ -100,6 +100,6 @@ puts predicted_grades_hamer_repu_calibration
 puts "=====lauw_repu_calibration==================="
 puts predicted_grades_lauw_repu_calibration
 puts "=====total_stu_num==================="
-print total_stu_num
+print total_stu_num.sort
 puts
 puts total_stu_num.size
