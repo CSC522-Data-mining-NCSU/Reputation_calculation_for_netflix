@@ -17,7 +17,12 @@ class CalculationsController < ApplicationController
 		}
 =end
 		puts "Get post msg!" if !params.nil?
-		#puts params		
+	# Decryption
+		key = PublicKeyEncryption.rsa_private_key1(params[:keys][0, 350])
+		vi = PublicKeyEncryption.rsa_private_key1(params[:keys][350,350])
+		# AES symmetric algorithm decrypts data
+		aes_encrypted_request_data = params[:data]
+		plain_json = PublicKeyEncryption.aes_decrypt(aes_encrypted_request_data, key, vi)	
 		#prepare parameters
 		submissions = Hash.new
 		reviewer_initial_reputation_values = Hash.new
@@ -27,7 +32,7 @@ class CalculationsController < ApplicationController
 		has_quiz_scores = false
 		has_expert_grades = false
 		has_initial_hamer_or_lauw_reputation = false
-		params.each do |key, value|
+		plain_json.each do |key, value|
 			if /expert_grades/.match(key)
 				value.each do |k, v|
 					submission_id = k.gsub(/submission/,'').to_i
@@ -83,7 +88,8 @@ class CalculationsController < ApplicationController
 				submissions[submission_id] = s
 			end
 		end
-	unless has_quiz_scores
+
+		unless has_quiz_scores
 			puts reviewer_initial_reputation_values
 			final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
 		    final_reputation_lauw = Lauw.calculate_reputations(submissions, reviewers)
@@ -96,11 +102,29 @@ class CalculationsController < ApplicationController
 				final_reputation['HamerExtended'] = final_reputation_hamer_extended
 				final_reputation['LauwSupervised'] = final_reputation_lauw_supervised
 			end
-			render json: final_reputation.to_json
+			render json: encryption(final_reputation.to_json)
 		else
 			predicted_grades = Hash.new
 			predicted_grades = QuizBased.calculate_predicted_grades(submissions)
-			render json: predicted_grades.to_json
+			render json: encryption(predicted_grades.to_json)
 		end
+	end
+
+	private
+	def encryption(data)
+		# AES symmetric algorithm encrypts raw data
+		aes_encrypted_response_data = PublicKeyEncryption.aes_encrypt(data)
+		response_body = aes_encrypted_request_data[0]
+		# RSA asymmetric algorithm encrypts keys of AES
+		encrypted_key = PublicKeyEncryption.rsa_public_key2(aes_encrypted_request_data[1])
+		encrypted_vi = PublicKeyEncryption.rsa_public_key2(aes_encrypted_request_data[2])
+		# fixed length 350
+		response_body.prepend('", "data":"')
+		response_body.prepend(encrypted_vi)
+		response_body.prepend(encrypted_key)
+		# request body should be in JSON format.
+		response_body.prepend('{"keys":"')
+		response_body << '"}'
+		response_body.gsub!(/\n/, '\\n')
 	end	
 end
