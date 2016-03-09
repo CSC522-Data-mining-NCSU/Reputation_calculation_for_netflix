@@ -53,3 +53,4 @@ bower.json
 hs_err_pid*
 
 *.txt
+*.pem
