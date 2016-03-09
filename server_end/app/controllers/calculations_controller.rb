@@ -22,7 +22,7 @@ class CalculationsController < ApplicationController
 		vi = PublicKeyEncryption.rsa_private_key1(params[:keys][350,350])
 		# AES symmetric algorithm decrypts data
 		aes_encrypted_request_data = params[:data]
-		plain_json = PublicKeyEncryption.aes_decrypt(aes_encrypted_request_data, key, vi)	
+		plain_json = PublicKeyEncryption.aes_decrypt(aes_encrypted_request_data, key, vi)
 		#prepare parameters
 		submissions = Hash.new
 		reviewer_initial_reputation_values = Hash.new
@@ -32,7 +32,7 @@ class CalculationsController < ApplicationController
 		has_quiz_scores = false
 		has_expert_grades = false
 		has_initial_hamer_or_lauw_reputation = false
-		plain_json.each do |key, value|
+		JSON.parse(plain_json).each do |key, value|
 			if /expert_grades/.match(key)
 				value.each do |k, v|
 					submission_id = k.gsub(/submission/,'').to_i
@@ -88,7 +88,6 @@ class CalculationsController < ApplicationController
 				submissions[submission_id] = s
 			end
 		end
-
 		unless has_quiz_scores
 			puts reviewer_initial_reputation_values
 			final_reputation_hamer = Hamer.calculate_reputations(submissions, reviewers)
@@ -114,10 +113,10 @@ class CalculationsController < ApplicationController
 	def encryption(data)
 		# AES symmetric algorithm encrypts raw data
 		aes_encrypted_response_data = PublicKeyEncryption.aes_encrypt(data)
-		response_body = aes_encrypted_request_data[0]
+		response_body = aes_encrypted_response_data[0]
 		# RSA asymmetric algorithm encrypts keys of AES
-		encrypted_key = PublicKeyEncryption.rsa_public_key2(aes_encrypted_request_data[1])
-		encrypted_vi = PublicKeyEncryption.rsa_public_key2(aes_encrypted_request_data[2])
+		encrypted_key = PublicKeyEncryption.rsa_public_key2(aes_encrypted_response_data[1])
+		encrypted_vi = PublicKeyEncryption.rsa_public_key2(aes_encrypted_response_data[2])
 		# fixed length 350
 		response_body.prepend('", "data":"')
 		response_body.prepend(encrypted_vi)
