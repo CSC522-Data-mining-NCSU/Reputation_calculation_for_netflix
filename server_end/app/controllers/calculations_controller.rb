@@ -89,7 +89,7 @@ class CalculationsController < ApplicationController
 					if reviewers[k].nil?
 						has_initial_hamer_reputation ? weight = reviewer_initial_values[reviewer_id] : weight = 1
 						has_initial_lauw_leniency ? leniency = reviewer_initial_values[reviewer_id] : leniency = 0
-						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: 0, weight: weight, variance: 0)
+						r = Reviewer.new(id: reviewer_id, review_records: Array.new, reputation: nil, leniency: leniency, weight: weight, variance: 0)
 						# Future improvement: actually storing ReviewRecord.id instead of storing whole ReviewRecord will save lots of space
 						r.review_records << rr
 						reviewers[reviewer_id] = r
