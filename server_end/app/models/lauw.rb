@@ -78,9 +78,16 @@ class Lauw < ActiveRecord::Base
       #for each reviewer, if no peer-review has been done in current task,  reputation =N/A
 	  puts "=========================Lauw's final_weights=========================="
       final_reputation = Hash.new
+      # store reputation values
       reviewers.sort_by {|key, reviewer| key.to_i}.to_h.each do |key, reviewer|
 	    	final_reputation[key] = reviewer.reputation.round(3)
 	    	puts 'reviewer' + reviewer.id.to_s + ': ' + reviewer.reputation.to_s
+	  end
+
+	  # store leniency values
+	  reviewers.sort_by {|key, reviewer| key.to_i}.to_h.each do |key, reviewer|
+	    	final_reputation[key.to_s + '_leniency'] = reviewer.leniency.round(3)
+	    	puts 'reviewer' + reviewer.id.to_s + '_leniency: ' + reviewer.leniency.to_s
 	  end
 
 	  return final_reputation
