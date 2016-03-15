@@ -1,4 +1,4 @@
-class LauwSupervised < ActiveRecord::Base
+class LauwPeer < ActiveRecord::Base
 	###############################################
 	#Define Lauw's algorithm
 	#parameters:
@@ -81,6 +81,12 @@ class LauwSupervised < ActiveRecord::Base
       reviewers.sort_by {|key, reviewer| key.to_i}.to_h.each do |key, reviewer|
 	    	final_reputation[key] = reviewer.reputation.round(3)
 	    	puts 'reviewer' + reviewer.id.to_s + ': ' + reviewer.reputation.to_s
+	  end
+
+	  # store leniency values
+	  reviewers.sort_by {|key, reviewer| key.to_i}.to_h.each do |key, reviewer|
+	    	final_reputation[key.to_s + '_leniency'] = reviewer.leniency.round(3)
+	    	puts 'reviewer' + reviewer.id.to_s + '_leniency: ' + reviewer.leniency.to_s
 	  end
 
 	  return final_reputation

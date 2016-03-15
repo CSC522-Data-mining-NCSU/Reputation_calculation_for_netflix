@@ -1,4 +1,4 @@
-class HamerExtended < ActiveRecord::Base
+class HamerExpert < ActiveRecord::Base
     ###############################################
     #Define Hamer's algorithm
     #parameters:
