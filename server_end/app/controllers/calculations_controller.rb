@@ -111,9 +111,9 @@ class CalculationsController < ApplicationController
 			final_reputation['Lauw'] = final_reputation_lauw
 			if has_expert_grades
 				final_reputation_hamer_expert = HamerExpert.calculate_reputations(submissions, reviewers, expert_grades) 
-				final_reputation_lauw_peer = LauwPeer.calculate_reputations(submissions, reviewers, expert_grades)
+				final_reputation_lauw_expert = LauwExpert.calculate_reputations(submissions, reviewers, expert_grades)
 				final_reputation['HamerExpert'] = final_reputation_hamer_expert
-				final_reputation['LauwPeer'] = final_reputation_lauw_peer
+				final_reputation['LauwExpert'] = final_reputation_lauw_expert
 			end
 			render json: encryption(final_reputation.to_json)
 		else
