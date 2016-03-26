@@ -1,4 +1,4 @@
-class LauwPeer < ActiveRecord::Base
+class LauwExpert < ActiveRecord::Base
 	###############################################
 	#Define Lauw's algorithm
 	#parameters:
