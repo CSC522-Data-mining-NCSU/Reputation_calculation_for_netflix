@@ -19,12 +19,7 @@ Peer-Review Markup Language (PRML) is a generic schema for encapsulating the raw
 This language defines some entities commonly used in different peer-review systems. The entities used in the reputation web service are a subset of the data defined in PRML, including clients, assignments, tasks, reviewers, reviewed entities and peer-review grade. <i>Table 1.1</i> explains each entity in detail.
 
 <i>Table 1.1 Entities needed in reputation web service</i><br/>
-Entity name	Explanation
-Client	A peer-review system  that communicates with the reputation web service.
-Assignment	A unit of work that the instructor assign to students. 
-Task	A task is the smallest unit in each assignment and each task includes one deadline.
-Actor	A user who did one or more peer-reviews.
-Artifact	The submissions for the current assignment. They can be links, files, etc. The reputation web service does not consider the content of each artifact; only the identifier of each artifact matters [4].
+<img src="https://lh6.googleusercontent.com/-6OOx6oxN2JQ/VwLlNkSRThI/AAAAAAAACjw/-KB-S1s1y7wyL6xDdV7dNuljTVNkRs90Q/w902-h571-no/10.png" width="600"/>
 
 Answer	The number of points each reviewer gives to each artifact. Each peer-review record contains identifier of artifact, identifier of reviewer and peer-review grade.
 
