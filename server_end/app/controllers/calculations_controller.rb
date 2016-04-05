@@ -2,22 +2,27 @@ class CalculationsController < ApplicationController
 	#Instead of completely turning off the built in security, 
 	#kills off any session that might exist when something hits the server without the CSRF token.
 	protect_from_forgery with: :null_session, if: Proc.new { |c| c.request.format == 'application/json' }
+	
+	swagger_controller :calculations, "Calculations"
+
+	swagger_api :reputation_algorithms do
+	  summary "Fetches reputation value for each peer reviewer"
+	  param :expert_grades, :string, :optional, "Expert Grades"
+	  param :initial_hamer_reputation, :string, :optional, "Initial Hamer Reputation"
+	  param :initial_lauw_reputation, :string, :optional, "Initial Lauw Reputation"
+	  param :quiz_scores, :string, :optional, "Quiz Scores"
+	  param :peer_review_records, :string, :required, "Peer Review Records"
+	  response :unauthorized
+	  response :not_acceptable
+	  response :unprocessable_entity
+	end
+
+
+
 	#response_to :json
 	def reputation_algorithms
-=begin
-		Input example:
-		{
-			"initial_hamer_reputation": {"stu1": 0.90, "stu2":0.88, "stu3":0.93, "stu4":0.8, "stu5":0.93, "stu8":0.93},  #optional
-			"initial_lauw_reputation": {"stu1": 1.90, "stu2":0.98, "stu3":1.12, "stu4":0.94, "stu5":1.24, "stu8":1.18},  #optional
-			"expert_grades": {"submission1": 90, "submission2":88, "submission3":93},  #optional
-			"quiz_scores" : {"submission1" : {"stu1":100, "stu3":80}, "submission2":{"stu2":40, "stu1":60}}, #optional
-			"submission1": {"stu1":81, "stu3":89},
-		    "submission2": {"stu5":87, "stu8":90},
-			"submission3": {"stu2":84, "stu4":86}
-		}
-=end
 		puts "Get post msg!" if !params.nil?
-	# Decryption
+		# Decryption
 		key = PublicKeyEncryption.rsa_private_key1(params[:keys][0, 350])
 		vi = PublicKeyEncryption.rsa_private_key1(params[:keys][350,350])
 		# AES symmetric algorithm decrypts data

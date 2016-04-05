@@ -1,0 +1,73 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "",
+  "resourcePath": "calculations",
+  "apis": [
+    {
+      "path": "/calculations/reputation_algorithms.json",
+      "operations": [
+        {
+          "summary": "Fetches reputation value for each peer reviewer",
+          "parameters": [
+            {
+              "paramType": "expert_grades",
+              "name": "string",
+              "type": "optional",
+              "description": null,
+              "required": false
+            },
+            {
+              "paramType": "initial_hamer_reputation",
+              "name": "string",
+              "type": "optional",
+              "description": null,
+              "required": false
+            },
+            {
+              "paramType": "initial_lauw_reputation",
+              "name": "string",
+              "type": "optional",
+              "description": null,
+              "required": false
+            },
+            {
+              "paramType": "quiz_scores",
+              "name": "string",
+              "type": "optional",
+              "description": null,
+              "required": false
+            },
+            {
+              "paramType": "peer_review_records",
+              "name": "string",
+              "type": "required",
+              "description": null,
+              "required": false
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 401,
+              "responseModel": null,
+              "message": "Unauthorized"
+            },
+            {
+              "code": 406,
+              "responseModel": null,
+              "message": "Not Acceptable"
+            },
+            {
+              "code": 422,
+              "responseModel": null,
+              "message": "Unprocessable Entity"
+            }
+          ],
+          "nickname": "Calculations#reputation_algorithms",
+          "method": "get"
+        }
+      ]
+    }
+  ],
+  "authorizations": null
+}

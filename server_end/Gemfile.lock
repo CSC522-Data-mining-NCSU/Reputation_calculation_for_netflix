@@ -40,7 +40,6 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
-    byebug (6.0.2)
     coderay (1.1.0)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
@@ -137,6 +136,9 @@ GEM
       activesupport (>= 3.0)
       sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.11)
+    swagger-docs (0.2.8)
+      activesupport (>= 3, < 5)
+      rails (>= 3, < 5)
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
@@ -164,7 +166,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  byebug
   coffee-rails (~> 4.1.0)
   jbuilder (~> 2.0)
   jquery-rails
@@ -177,8 +178,12 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   spring
   sqlite3
+  swagger-docs
   therubyracer
   thin
   turbolinks
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
+
+BUNDLED WITH
+   1.11.2
