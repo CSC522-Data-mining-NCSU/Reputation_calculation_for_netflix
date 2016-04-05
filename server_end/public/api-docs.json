@@ -1,0 +1,19 @@
+{
+  "apiVersion": "1.0",
+  "swaggerVersion": "1.2",
+  "basePath": "/",
+  "apis": [
+    {
+      "path": "calculations.{format}",
+      "description": "Calculations"
+    }
+  ],
+  "authorizations": null,
+  "info": {
+    "title": "Reputation Web Service",
+    "description": "This is a Reputation Web Service.",
+    "contact": "zhu6@ncsu.edu",
+    "license": "Apache 2.0",
+    "licenseUrl": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+}

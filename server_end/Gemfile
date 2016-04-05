@@ -15,7 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'therubyracer', platforms: :ruby
 gem 'mysql2', '~> 0.3.20'
 gem 'thin'
-
+gem 'swagger-docs'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
@@ -39,7 +39,6 @@ group :development, :test do
 	gem 'pry'
 	gem 'pry-remote'
 	gem 'pry-nav'
-	gem 'byebug'
 end
 
 group :development do
