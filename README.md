@@ -1,11 +1,14 @@
 # Reputation Web Service
 
-## How to run code
+## How to run code for server-end
 1. You need to install ruby environment on you machine. [Here](https://www.ruby-lang.org/en/documentation/installation/) is the instruction for different OS.
 2. Then you need to install rails [Here](http://guides.rubyonrails.org/getting_started.html#installing-rails) is the instruction.
 3. You need to run `bundle install` to install all required gems.
 4. After that you need to run `rake db:migrate` to build the DB structure.
 5. Run `rails s` to start the server
+
+## How to communicate reputation web service via Expertiza UI
+ If you have teaching staff account of [Expertiza](https://expertiza.ncsu.edu/), you can go to [https://expertiza.ncsu.edu/reputation_web_service/client](https://expertiza.ncsu.edu/reputation_web_service/client) and follow the instructions below and get the results.
 
 ##	Web Service Structure
 The reputation web service consists of three main parts, that is client side, server side and the standard transmission format. <i>Figure 1.1</i> shows the structure of the web service in general. Several client systems are communicating with reputation web service. Since each system has its unique DB schema, different data wrappers are needed to convert raw data into standard transmission format. And on the server side, another data wrapper is used to parse the request and generate adjacency matrices, which indicate what score each reviewer has given to each submission, and are the inputs to reputation algorithms. Finally, the reputation web service sends the results back to client systems.
