@@ -23,11 +23,15 @@ class CalculationsController < ApplicationController
 	def reputation_algorithms
 		puts "Get post msg!" if !params.nil?
 		# Decryption
-		key = PublicKeyEncryption.rsa_private_key1(params[:keys][0, 350])
-		vi = PublicKeyEncryption.rsa_private_key1(params[:keys][350,350])
-		# AES symmetric algorithm decrypts data
-		aes_encrypted_request_data = params[:data]
-		plain_json = PublicKeyEncryption.aes_decrypt(aes_encrypted_request_data, key, vi)
+		if !params[:keys].nil? and !params[:data].nil?
+			key = PublicKeyEncryption.rsa_private_key1(params[:keys][0, 350])
+			vi = PublicKeyEncryption.rsa_private_key1(params[:keys][350,350])
+			# AES symmetric algorithm decrypts data
+			aes_encrypted_request_data = params[:data]
+			plain_json = JSON.parse(PublicKeyEncryption.aes_decrypt(aes_encrypted_request_data, key, vi))
+		elsif params.keys.any? {|key| key.match(/submission[0-9]+/)}
+			plain_json = params
+		end
 		#prepare parameters
 		submissions = Hash.new
 		reviewer_initial_values = Hash.new
@@ -39,7 +43,7 @@ class CalculationsController < ApplicationController
 		has_initial_hamer_reputation = false
 		has_initial_lauw_leniency = false
 
-		JSON.parse(plain_json).each do |key, value|
+		plain_json.each do |key, value|
 			if /expert_grades/.match(key)
 				value.each do |k, v|
 					submission_id = k.gsub(/submission/,'').to_i
